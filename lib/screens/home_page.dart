@@ -24,7 +24,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     checkPreferences().whenComplete(() {
       initValues();
-      setState(() {});
     });
   }
 
@@ -93,6 +92,7 @@ class _HomePageState extends State<HomePage> {
                     .push(HeroDialogRoute(builder: (context) {
                   return IncomesChangePopup(
                     heroTag: incomesTag,
+                    incomesValue: incomes,
                   );
                 }));
                 if (result) {

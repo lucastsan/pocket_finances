@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_finances/components/Tab_bar.dart';
 import 'package:pocket_finances/constants.dart';
+import 'package:pocket_finances/screens/current_expenses.dart';
+import 'package:pocket_finances/screens/fixed_expenses.dart';
 import 'package:pocket_finances/screens/home_page.dart';
 
 class MainPage extends StatelessWidget {
@@ -21,7 +23,13 @@ class MainPage extends StatelessWidget {
           elevation: 0,
           bottom: buildTabBar(),
         ),
-        body: HomePage(),
+        body: TabBarView(
+          children: [
+            HomePage(),
+            CurrentExpensesPage(),
+            FixedExpensesPage(),
+          ],
+        ),
       ),
     );
   }

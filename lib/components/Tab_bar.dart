@@ -10,10 +10,10 @@ TabBar buildTabBar() {
         labelText: 'Página Principal',
       ),
       TabBarBox(
-        labelText: 'Despesas Fixas',
+        labelText: 'Despesas',
       ),
       TabBarBox(
-        labelText: 'Despesas',
+        labelText: 'Despesas Fixas',
       ),
     ],
     indicatorSize: TabBarIndicatorSize.label,

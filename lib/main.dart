@@ -22,6 +22,13 @@ class MyApp extends StatelessWidget {
         highlightColor: Colors.transparent,
         splashColor: Colors.transparent,
         indicatorColor: kSelectionColor,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFF475BBF),
+          foregroundColor: Colors.white,
+        ),
+        colorScheme: ColorScheme.fromSwatch(
+          accentColor: Color(0x70475BBF),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: TextStyle(color: kSelectionColor),
           focusedBorder: OutlineInputBorder(

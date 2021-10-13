@@ -5,10 +5,13 @@ import 'package:pocket_finances/components/shared_preferences_actions.dart';
 import 'package:pocket_finances/constants.dart';
 
 class IncomesChangePopup extends StatelessWidget {
-  IncomesChangePopup({Key? key, required this.heroTag}) : super(key: key);
+  IncomesChangePopup(
+      {Key? key, required this.heroTag, required this.incomesValue})
+      : super(key: key);
 
   final String heroTag;
   final TextEditingController _incomesInputController = TextEditingController();
+  final double incomesValue;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,7 @@ class IncomesChangePopup extends StatelessWidget {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: TextField(
+                          child: TextFormField(
                             controller: _incomesInputController,
                             keyboardType:
                                 TextInputType.numberWithOptions(decimal: true),
