@@ -12,7 +12,8 @@ class MainPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 150,
+          toolbarHeight: 100,
+          backgroundColor: kbackgroundColor,
           title: Padding(
             padding: const EdgeInsets.only(left: 15.0, top: 20.0, bottom: 20.0),
             child: Text(
