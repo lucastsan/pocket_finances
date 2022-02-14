@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Expense {
   Expense({
     required this.name,
@@ -5,20 +7,40 @@ class Expense {
     required this.date,
   });
   late final String name;
-  late final int value;
+  late final double value;
   late final String date;
 
-  Expense.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    value = json['value'];
-    date = json['date'];
+  factory Expense.fromJson(Map<String, dynamic> json) {
+    return Expense(
+      name: json['name'],
+      value: json['value'],
+      date: json['date'],
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['name'] = name;
-    _data['value'] = value;
-    _data['date'] = date;
-    return _data;
+  @override
+  String toString() {
+    return '{${this.name}, ${this.value}, ${this.date}}';
+  }
+
+  static Map<String, dynamic> toJson(Expense expense) => {
+        'name': expense.name,
+        'value': expense.value,
+        'date': expense.date,
+      };
+
+  static String encode(List<Expense> expenses) => json.encode(
+        expenses
+            .map<Map<String, dynamic>>((expense) => Expense.toJson(expense))
+            .toList(),
+      );
+
+  static List<Expense> decode(String expenses) {
+    var expensesListJson = jsonDecode(expenses) as List;
+    List<Expense> expensesList = expensesListJson
+        .map((expenseJson) => Expense.fromJson(expenseJson))
+        .toList();
+    print(expensesList);
+    return expensesList;
   }
 }

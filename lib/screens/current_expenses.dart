@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_finances/screens/home_page.dart';
+import 'package:pocket_finances/components/shared_preferences_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:pocket_finances/components/hero_dialog_route.dart';
@@ -15,21 +15,49 @@ class CurrentExpensesPage extends StatefulWidget {
 }
 
 class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
-  String heroTag = 'add-current-expense';
-  List<Expense> expensesList = [];
+  final String heroTag = 'add-current-expense';
+  late List<Expense> expensesList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: buildListView(),
+        child: FutureBuilder(
+          future: getExpensesList(),
+          initialData: expensesList,
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Expense>> snapshot) {
+            if (snapshot.data == null) {
+              return Center(
+                child: Text(
+                  'Carregando...',
+                  style: kBalanceTitleStyle,
+                ),
+              );
+            } else {
+              return ListView.builder(
+                  itemCount: snapshot.data?.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(snapshot.data![index].name),
+                      subtitle: Text(snapshot.data![index].date),
+                      trailing: Text(snapshot.data![index].value.toString()),
+                    );
+                  });
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: heroTag,
-        onPressed: () {
-          Navigator.of(context).push(HeroDialogRoute(builder: (context) {
+        onPressed: () async {
+          final result = await Navigator.of(context)
+              .push(HeroDialogRoute(builder: (context) {
             return AddCurrentExpenses(heroTag: heroTag);
           }));
+          setState(() {
+            addExpense(result, expensesList);
+          });
         },
         child: Material(
           type: MaterialType.transparency,
@@ -48,33 +76,9 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
           style: kBalanceTitleStyle,
         ),
       );
-  Widget buildListView() {
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(expensesList[index].name),
-        );
-      },
-      itemCount: expensesList.length,
-    );
-  }
 
-  void addExpense(Expense expense) {
-    expensesList.insert(0, expense);
-    saveExpensesList();
-  }
-
-  void saveExpensesList() async {
-    List<String> expensesStringList =
-        expensesList.map((item) => json.encode(item.toJson())).toList();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('expenses-list', expensesStringList);
-  }
-
-  void getExpensesList() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? expensesStringList = prefs.getStringList('expenses-list');
-    Iterable list = json.decode(expensesStringList.toString());
-    expensesList = list.map((item) => Expense.fromJson(item)).toList();
+  void addExpense(Expense expense, List<Expense> expensesList) {
+    expensesList.add(expense);
+    saveExpensesList(expensesList).whenComplete(() => print(expensesList));
   }
 }

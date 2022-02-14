@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_finances/components/main_card.dart';
 import 'package:pocket_finances/constants.dart';
+import 'package:pocket_finances/models/expense_model.dart';
 
 class AddCurrentExpenses extends StatelessWidget {
-  const AddCurrentExpenses({Key? key, required this.heroTag}) : super(key: key);
+  AddCurrentExpenses({Key? key, required this.heroTag}) : super(key: key);
 
   final String heroTag;
+  final _expenseNameController = TextEditingController();
+  final _expenseValueController = TextEditingController();
+  final _expenseDateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +60,7 @@ class AddCurrentExpenses extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: TextFormField(
+                        controller: _expenseNameController,
                         decoration: InputDecoration(labelText: 'Descrição'),
                       ),
                     ),
@@ -64,6 +69,7 @@ class AddCurrentExpenses extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: TextFormField(
+                        controller: _expenseValueController,
                         decoration: InputDecoration(
                           labelText: 'Valor',
                         ),
@@ -75,6 +81,7 @@ class AddCurrentExpenses extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: TextFormField(
+                        controller: _expenseDateController,
                         decoration: InputDecoration(labelText: 'Data'),
                       ),
                     ),
@@ -109,7 +116,14 @@ class AddCurrentExpenses extends StatelessWidget {
                               'Adicionar',
                               style: kValuesStyle,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Expense newExpense = Expense(
+                                  name: _expenseNameController.text,
+                                  date: _expenseDateController.text,
+                                  value: double.parse(
+                                      _expenseValueController.text));
+                              Navigator.pop(context, newExpense);
+                            },
                           ),
                         ),
                       ],

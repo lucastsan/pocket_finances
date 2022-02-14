@@ -6,6 +6,7 @@ import 'package:pocket_finances/screens/fixed_expenses.dart';
 import 'package:pocket_finances/screens/home_page.dart';
 
 class MainPage extends StatelessWidget {
+  final numState = new ValueNotifier(0);
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -24,13 +25,17 @@ class MainPage extends StatelessWidget {
           elevation: 0,
           bottom: buildTabBar(),
         ),
-        body: TabBarView(
-          children: [
-            HomePage(),
-            CurrentExpensesPage(),
-            FixedExpensesPage(),
-          ],
-        ),
+        body: ValueListenableBuilder<int>(
+            valueListenable: numState,
+            builder: (context, child, widget) {
+              return TabBarView(
+                children: [
+                  HomePage(),
+                  CurrentExpensesPage(),
+                  FixedExpensesPage(),
+                ],
+              );
+            }),
       ),
     );
   }

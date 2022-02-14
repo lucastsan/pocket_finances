@@ -5,6 +5,7 @@ import 'package:pocket_finances/components/hero_dialog_route.dart';
 import 'package:pocket_finances/components/main_card.dart';
 import 'package:pocket_finances/components/shared_preferences_actions.dart';
 import 'package:pocket_finances/constants.dart';
+import 'package:pocket_finances/screens/current_expenses.dart';
 import 'package:pocket_finances/screens/incomes_change_popup.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,22 +21,23 @@ late double fixedExpenses;
 late double expenses;
 
 class _HomePageState extends State<HomePage> {
-  initState() {
-    super.initState();
-    checkPreferences().whenComplete(() {
-      initValues();
-    });
-  }
-
   Future<void> initValues() async {
     incomes = await getIncomes() ?? 0;
     expenses = await getExpenses() ?? 0;
     fixedExpenses = await getFixedExpenses() ?? 0;
     balance = incomes - (expenses + fixedExpenses);
-    print('Incomes: $incomes');
-    print('Expenses: $expenses');
-    print('Fixed Expenses: $fixedExpenses');
-    print('Balance: $balance');
+  }
+
+  initState() {
+    super.initState();
+    checkPreferences().whenComplete(() {
+      initValues().whenComplete(() {
+        print('Incomes: $incomes');
+        print('Expenses: $expenses');
+        print('Fixed Expenses: $fixedExpenses');
+        print('Balance: $balance');
+      });
+    });
   }
 
   String incomesTag = 'change-incomes-value';

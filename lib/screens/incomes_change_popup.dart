@@ -10,7 +10,7 @@ class IncomesChangePopup extends StatelessWidget {
       : super(key: key);
 
   final String heroTag;
-  final TextEditingController _incomesInputController = TextEditingController();
+  final _incomesInputController = TextEditingController();
   final double incomesValue;
 
   @override
