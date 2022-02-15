@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pocket_finances/components/Tab_bar.dart';
 import 'package:pocket_finances/constants.dart';
 import 'package:pocket_finances/screens/current_expenses.dart';
 import 'package:pocket_finances/screens/fixed_expenses.dart';
 import 'package:pocket_finances/screens/home_page.dart';
+
+StreamController<int> expController = StreamController<int>();
 
 class MainPage extends StatelessWidget {
   final numState = new ValueNotifier(0);
@@ -30,7 +34,9 @@ class MainPage extends StatelessWidget {
             builder: (context, child, widget) {
               return TabBarView(
                 children: [
-                  HomePage(),
+                  HomePage(
+                    expStream: expController.stream,
+                  ),
                   CurrentExpensesPage(),
                   FixedExpensesPage(),
                 ],

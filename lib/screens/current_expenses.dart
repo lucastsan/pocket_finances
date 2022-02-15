@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pocket_finances/components/shared_preferences_actions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'package:pocket_finances/screens/main_page.dart';
 import 'package:pocket_finances/components/hero_dialog_route.dart';
 import 'package:pocket_finances/constants.dart';
 import 'package:pocket_finances/models/expense_model.dart';
@@ -16,15 +15,16 @@ class CurrentExpensesPage extends StatefulWidget {
 
 class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
   final String heroTag = 'add-current-expense';
-  late List<Expense> expensesList = [];
+  late List<Expense> expensesList;
+  List<int> _selectedItems = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         child: FutureBuilder(
-          future: getExpensesList(),
-          initialData: expensesList,
+          future: getExpensesList().then((value) => expensesList = value),
+          initialData: expensesList = [],
           builder:
               (BuildContext context, AsyncSnapshot<List<Expense>> snapshot) {
             if (snapshot.data == null) {
@@ -38,10 +38,48 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
               return ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(snapshot.data![index].name),
-                      subtitle: Text(snapshot.data![index].date),
-                      trailing: Text(snapshot.data![index].value.toString()),
+                    return Container(
+                      color: (_selectedItems.contains(index))
+                          ? kHighlightColor
+                          : Colors.transparent,
+                      child: ListTile(
+                        onLongPress: () {
+                          if (!_selectedItems.contains(index)) {
+                            setState(() {
+                              _selectedItems.add(index);
+                              print(_selectedItems);
+                            });
+                          }
+                        },
+                        onTap: () {
+                          if (_selectedItems.isNotEmpty) {
+                            if (_selectedItems.contains(index)) {
+                              setState(() {
+                                _selectedItems
+                                    .removeWhere((element) => element == index);
+                                print(_selectedItems);
+                              });
+                            } else {
+                              setState(() {
+                                _selectedItems.add(index);
+                                print(_selectedItems);
+                              });
+                            }
+                          }
+                        },
+                        title: Text(
+                          snapshot.data![index].name,
+                          style: kBalanceTitleStyle,
+                        ),
+                        subtitle: Text(
+                          snapshot.data![index].date,
+                          style: kInfoValueStyle,
+                        ),
+                        trailing: Text(
+                          snapshot.data![index].value.toString(),
+                          style: kBalanceTitleStyle,
+                        ),
+                      ),
                     );
                   });
             }
@@ -55,9 +93,12 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
               .push(HeroDialogRoute(builder: (context) {
             return AddCurrentExpenses(heroTag: heroTag);
           }));
-          setState(() {
-            addExpense(result, expensesList);
-          });
+          if (result != false) {
+            setState(() {
+              addExpense(result, expensesList);
+              expController.add(1);
+            });
+          }
         },
         child: Material(
           type: MaterialType.transparency,

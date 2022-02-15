@@ -41,6 +41,11 @@ TextStyle kBalanceValueStyle = GoogleFonts.palanquinDark(
   fontWeight: FontWeight.w400,
 );
 
+TextStyle kInfoValueStyle = GoogleFonts.nunito(
+  fontSize: 15.0,
+  color: Colors.white,
+);
+
 const Color kFieldColor = Color(0xFF1F2535);
 const Color kSelectionColor = Color(0xFF475BBF);
 const Color kHighlightColor = Color(0x70475BBF);
