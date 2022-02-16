@@ -59,20 +59,18 @@ class AddCurrentExpenses extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: TextFormField(
+                      child: ExpTextField(
                         controller: _expenseNameController,
-                        decoration: InputDecoration(labelText: 'Descrição'),
+                        hintText: 'Descrição',
                       ),
                     ),
                   ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: TextFormField(
+                      child: ExpTextField(
                         controller: _expenseValueController,
-                        decoration: InputDecoration(
-                          labelText: 'Valor',
-                        ),
+                        hintText: 'Valor',
                         keyboardType: TextInputType.number,
                       ),
                     ),
@@ -80,9 +78,9 @@ class AddCurrentExpenses extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: TextFormField(
+                      child: ExpTextField(
                         controller: _expenseDateController,
-                        decoration: InputDecoration(labelText: 'Data'),
+                        hintText: 'Data',
                       ),
                     ),
                   ),
@@ -135,6 +133,32 @@ class AddCurrentExpenses extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ExpTextField extends StatelessWidget {
+  const ExpTextField(
+      {Key? key,
+      required this.controller,
+      required this.hintText,
+      this.keyboardType})
+      : super(key: key);
+
+  final TextEditingController controller;
+  final String hintText;
+  final TextInputType? keyboardType;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: kDeactivateText,
+        border: OutlineInputBorder(),
+      ),
+      keyboardType: keyboardType ?? TextInputType.text,
     );
   }
 }

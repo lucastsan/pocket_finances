@@ -51,4 +51,5 @@ const Color kSelectionColor = Color(0xFF475BBF);
 const Color kHighlightColor = Color(0x70475BBF);
 TextStyle kDeactivateText = GoogleFonts.nunito(
   color: Color(0xFF6D768A),
+  fontWeight: FontWeight.bold,
 );

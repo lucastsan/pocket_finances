@@ -5,6 +5,7 @@ import 'package:pocket_finances/components/hero_dialog_route.dart';
 import 'package:pocket_finances/constants.dart';
 import 'package:pocket_finances/models/expense_model.dart';
 import 'package:pocket_finances/screens/add_current_expenses.dart';
+import 'package:pocket_finances/components/snackbar.dart';
 
 class CurrentExpensesPage extends StatefulWidget {
   const CurrentExpensesPage({Key? key}) : super(key: key);
@@ -17,11 +18,14 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
   final String heroTag = 'add-current-expense';
   late List<Expense> expensesList;
   List<int> _selectedItems = [];
+  late SnackBar snackbar =
+      SnackBarSelection(selectedItems: _selectedItems.length);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        margin: EdgeInsets.only(top: 10),
         child: FutureBuilder(
           future: getExpensesList().then((value) => expensesList = value),
           initialData: expensesList = [],
@@ -46,6 +50,8 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                         onLongPress: () {
                           if (!_selectedItems.contains(index)) {
                             setState(() {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackbar);
                               _selectedItems.add(index);
                               print(_selectedItems);
                             });
