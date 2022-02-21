@@ -14,6 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData.dark().copyWith(
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: ButtonStyle(),
+        ),
         textSelectionTheme:
             TextSelectionThemeData(cursorColor: kSelectionColor),
         brightness: Brightness.dark,

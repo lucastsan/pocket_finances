@@ -16,6 +16,7 @@ class CurrentExpensesPage extends StatefulWidget {
 class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
   final String heroTag = 'add-current-expense';
   late List<Expense> expensesList;
+  double boxHeight = 0;
   List<int> _selectedItems = [];
 
   @override
@@ -50,6 +51,7 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                               onLongPress: () {
                                 if (!_selectedItems.contains(index)) {
                                   setState(() {
+                                    boxHeight = 80;
                                     _selectedItems.add(index);
                                     print(_selectedItems);
                                   });
@@ -58,6 +60,9 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                               onTap: () {
                                 if (_selectedItems.isNotEmpty) {
                                   if (_selectedItems.contains(index)) {
+                                    if (_selectedItems.length <= 1) {
+                                      boxHeight = 0;
+                                    }
                                     setState(() {
                                       _selectedItems.removeWhere(
                                           (element) => element == index);
@@ -87,25 +92,42 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                           );
                         }),
                   ),
-                  _selectedItems.length >= 1
-                      ? Container(
-                          padding: EdgeInsets.all(15),
-                          width: double.maxFinite,
-                          height: 80,
-                          color: kMainCard,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(_selectedItems.length.toString() +
-                                  ' Items selecionados'),
-                              ElevatedButton(
-                                onPressed: () {},
-                                child: Icon(Icons.delete),
-                              )
-                            ],
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeOutCubic,
+                    padding: EdgeInsets.all(15),
+                    width: double.maxFinite,
+                    height: boxHeight,
+                    color: kMainCard,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(_selectedItems.length.toString() +
+                            ' Items selecionados'),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                kSelectionColor),
                           ),
+                          onPressed: () {
+                            for (var item in _selectedItems) {
+                              if (expensesList.length - 1 < item) {
+                                item--;
+                              }
+                              expensesList.removeAt(item);
+                            }
+                            setState(() {
+                              _selectedItems.clear();
+                              saveExpensesList(expensesList);
+                              boxHeight = 0;
+                              expController.add(1);
+                            });
+                          },
+                          child: Icon(Icons.delete),
                         )
-                      : Container(),
+                      ],
+                    ),
+                  ),
                 ],
               );
             }

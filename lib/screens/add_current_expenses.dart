@@ -2,14 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:pocket_finances/components/main_card.dart';
 import 'package:pocket_finances/constants.dart';
 import 'package:pocket_finances/models/expense_model.dart';
+import 'package:pocket_finances/models/textfield.dart';
 
-class AddCurrentExpenses extends StatelessWidget {
+class AddCurrentExpenses extends StatefulWidget {
   AddCurrentExpenses({Key? key, required this.heroTag}) : super(key: key);
 
   final String heroTag;
+
+  @override
+  _AddCurrentExpensesState createState() => _AddCurrentExpensesState();
+}
+
+class _AddCurrentExpensesState extends State<AddCurrentExpenses> {
   final _expenseNameController = TextEditingController();
   final _expenseValueController = TextEditingController();
-  final _expenseDateController = TextEditingController();
+
+  late DateTime _selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +42,7 @@ class AddCurrentExpenses extends StatelessWidget {
             child: hero.child,
           );
         },
-        tag: heroTag,
+        tag: widget.heroTag,
         child: Material(
           type: MaterialType.transparency,
           child: MainCard(
@@ -77,12 +85,45 @@ class AddCurrentExpenses extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ExpTextField(
-                        controller: _expenseDateController,
-                        hintText: 'Data',
-                      ),
-                    ),
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                alignment: Alignment.centerLeft,
+                                height: double.infinity,
+                                child: Text(
+                                  getDate(),
+                                  style: kActivatedText,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.black26),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: double.infinity,
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            kSelectionColor),
+                                  ),
+                                  onPressed: () {
+                                    selectDate(context);
+                                  },
+                                  child: Icon(Icons.calendar_today_outlined),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
                   ),
                   SizedBox(
                     height: 20,
@@ -117,7 +158,7 @@ class AddCurrentExpenses extends StatelessWidget {
                             onPressed: () {
                               Expense newExpense = Expense(
                                   name: _expenseNameController.text,
-                                  date: _expenseDateController.text,
+                                  date: getDate(),
                                   value: double.parse(
                                       _expenseValueController.text));
                               Navigator.pop(context, newExpense);
@@ -135,30 +176,28 @@ class AddCurrentExpenses extends StatelessWidget {
       ),
     );
   }
-}
 
-class ExpTextField extends StatelessWidget {
-  const ExpTextField(
-      {Key? key,
-      required this.controller,
-      required this.hintText,
-      this.keyboardType})
-      : super(key: key);
+  Future selectDate(BuildContext context) async {
+    final initialDate = DateTime.now();
+    DateTime? datePicked = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime(DateTime.now().year - 5),
+        lastDate: DateTime(DateTime.now().year + 5),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(data: ThemeData.dark(), child: child!);
+        });
 
-  final TextEditingController controller;
-  final String hintText;
-  final TextInputType? keyboardType;
+    if (datePicked == null) {
+      datePicked = initialDate;
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: kDeactivateText,
-        border: OutlineInputBorder(),
-      ),
-      keyboardType: keyboardType ?? TextInputType.text,
-    );
+    setState(() {
+      _selectedDate = datePicked == null ? initialDate : datePicked;
+    });
+  }
+
+  String getDate() {
+    return '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}';
   }
 }
