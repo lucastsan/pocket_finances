@@ -29,13 +29,8 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
           initialData: expensesList = [],
           builder:
               (BuildContext context, AsyncSnapshot<List<Expense>> snapshot) {
-            if (snapshot.data == null) {
-              return Center(
-                child: Text(
-                  'Carregando...',
-                  style: kBalanceTitleStyle,
-                ),
-              );
+            if (snapshot.data == null || snapshot.data!.isEmpty) {
+              return emptyList();
             } else {
               return Column(
                 children: [
@@ -102,8 +97,14 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(_selectedItems.length.toString() +
-                            ' Items selecionados'),
+                        Text(
+                          _selectedItems.length <= 1
+                              ? _selectedItems.length.toString() +
+                                  ' Item selecionado'
+                              : _selectedItems.length.toString() +
+                                  ' Items selecionados',
+                          style: kActivatedText,
+                        ),
                         ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(
@@ -142,7 +143,7 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                     .push(HeroDialogRoute(builder: (context) {
                   return AddCurrentExpenses(heroTag: heroTag);
                 }));
-                if (result != false) {
+                if (result != false && result != null) {
                   setState(() {
                     addExpense(result, expensesList);
                     expController.add(1);

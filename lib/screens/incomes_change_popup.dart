@@ -87,8 +87,11 @@ class IncomesChangePopup extends StatelessWidget {
                                 ),
                                 onPressed: () {
                                   setIncomes(
-                                      incomes: double.parse(
-                                          _incomesInputController.text));
+                                      incomes: _incomesInputController
+                                              .text.isNotEmpty
+                                          ? double.parse(
+                                              _incomesInputController.text)
+                                          : 0);
                                   Navigator.pop(context, true);
                                 },
                               ),

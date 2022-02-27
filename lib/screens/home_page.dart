@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:pocket_finances/components/hero_dialog_route.dart';
 import 'package:pocket_finances/components/main_card.dart';
@@ -22,12 +21,14 @@ class _HomePageState extends State<HomePage> {
   late double incomes;
   late double fixedExpenses;
   late double expenses;
+  late double percentage;
 
   Future<void> initValues() async {
     incomes = await getIncomes() ?? 0;
     expenses = await getExpenses() ?? 0;
     fixedExpenses = await getFixedExpenses() ?? 0;
     balance = incomes - (expenses + fixedExpenses);
+    calcPercentage();
   }
 
   initState() {
@@ -48,8 +49,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   void updateExp() async {
-    expenses = await getExpenses() ?? 0;
-    fixedExpenses = await getFixedExpenses() ?? 0;
+    initValues();
+  }
+
+  void calcPercentage() {
+    var calc = (expenses + fixedExpenses) / incomes;
+    if (calc >= 0 && calc <= 1) {
+      percentage = calc;
+    }
+    if (calc < 0) {
+      percentage = 0;
+    }
+    if (calc > 1) {
+      percentage = 1;
+    }
   }
 
   String incomesTag = 'change-incomes-value';
@@ -92,8 +105,22 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     SizedBox(height: 15.0),
-                    LinearPercentIndicator(
-                      lineHeight: 10.0,
+                    FutureBuilder(
+                      future: initValues(),
+                      builder:
+                          (BuildContext context, AsyncSnapshot<void> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return LinearPercentIndicator(
+                            lineHeight: 10.0,
+                            percent: percentage,
+                            progressColor: kSelectionColor,
+                          );
+                        } else {
+                          return SizedBox(
+                            height: 10,
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -109,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                     incomesValue: incomes,
                   );
                 }));
-                if (result) {
+                if (result != null) {
                   setState(() {
                     initValues();
                   });
@@ -148,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                backgroundColor: kMainCard,
+                backgroundColor: kIncomesCard,
               ),
             ),
             MainCard(

@@ -10,6 +10,7 @@ TextStyle kTitleStyle = GoogleFonts.palanquinDark(
 const Color kbackgroundColor = Color(0xFF181F2C);
 
 const Color kMainCard = Color(0xFF1F2535);
+const Color kIncomesCard = Color(0xFF2A3349);
 
 TextStyle kValuesStyle = GoogleFonts.nunito(
   fontSize: 15.0,
