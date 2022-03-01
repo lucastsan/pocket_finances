@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   late double incomes;
   late double fixedExpenses;
   late double expenses;
-  late double percentage;
+  late double percentage = 0;
 
   Future<void> initValues() async {
     incomes = await getIncomes() ?? 0;

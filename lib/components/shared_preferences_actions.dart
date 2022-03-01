@@ -1,6 +1,6 @@
+import 'package:pocket_finances/models/fixed_expense_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pocket_finances/models/expense_model.dart';
-import 'dart:convert';
 
 Future<void> checkPreferences() async {
   try {
@@ -34,7 +34,6 @@ Future<double?> getIncomes() async {
 }
 
 Future<double?> getExpenses() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
   List<Expense> expensesList = await getExpensesList();
   double expensesSum = 0;
   for (var i = 0; i < expensesList.length; i++) {
@@ -44,9 +43,12 @@ Future<double?> getExpenses() async {
 }
 
 Future<double?> getFixedExpenses() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var fixedExpenses = prefs.getDouble('fixedExpenses') ?? 0;
-  return fixedExpenses;
+  List<FixedExpense> expensesList = await getFixedExpensesList();
+  double expensesSum = 0;
+  for (var i = 0; i < expensesList.length; i++) {
+    expensesSum += expensesList[i].value;
+  }
+  return expensesSum;
 }
 
 void setIncomes({required double incomes}) async {
@@ -60,14 +62,31 @@ Future<void> saveExpensesList(List<Expense> expenses) async {
   await prefs.setString('expenses-list', encodedData);
 }
 
+Future<void> saveFixedExpensesList(List<FixedExpense> expenses) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final String encodedData = FixedExpense.encode(expenses);
+  await prefs.setString('fixedExpenses-list', encodedData);
+}
+
 Future<List<Expense>> getExpensesList() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   var expensesString = prefs.getString('expenses-list');
   if (expensesString?.isEmpty ?? true) {
     return <Expense>[];
   } else {
-    print(expensesString);
     final List<Expense> expensesData = Expense.decode(expensesString!);
+    return expensesData;
+  }
+}
+
+Future<List<FixedExpense>> getFixedExpensesList() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  var expensesString = prefs.getString('fixedExpenses-list');
+  if (expensesString?.isEmpty ?? true) {
+    return <FixedExpense>[];
+  } else {
+    final List<FixedExpense> expensesData =
+        FixedExpense.decode(expensesString!);
     return expensesData;
   }
 }

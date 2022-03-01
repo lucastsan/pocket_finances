@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class FixedExpense {
   FixedExpense({
     required this.name,
@@ -5,20 +7,41 @@ class FixedExpense {
     required this.recurrenceDate,
   });
   late final String name;
-  late final int value;
+  late final double value;
   late final String recurrenceDate;
 
-  FixedExpense.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    value = json['value'];
-    recurrenceDate = json['recurrenceDate'];
+  factory FixedExpense.fromJson(Map<String, dynamic> json) {
+    return FixedExpense(
+      name: json['name'],
+      value: json['value'],
+      recurrenceDate: json['recurrenceDate'],
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final _data = <String, dynamic>{};
-    _data['name'] = name;
-    _data['value'] = value;
-    _data['recurrenceDate'] = recurrenceDate;
-    return _data;
+  static Map<String, dynamic> toJson(FixedExpense fixedExpense) => {
+        'name': fixedExpense.name,
+        'value': fixedExpense.value,
+        'recurrenceDate': fixedExpense.recurrenceDate,
+      };
+
+  static String encode(List<FixedExpense> fixedExpenses) => json.encode(
+        fixedExpenses
+            .map<Map<String, dynamic>>(
+                (fixedExpense) => FixedExpense.toJson(fixedExpense))
+            .toList(),
+      );
+
+  static List<FixedExpense> decode(String fixedExpenses) {
+    var fixedExpensesListJson = jsonDecode(fixedExpenses) as List;
+    List<FixedExpense> expensesList = fixedExpensesListJson
+        .map((fixedExpenseJson) => FixedExpense.fromJson(fixedExpenseJson))
+        .toList();
+    print(expensesList);
+    return expensesList;
+  }
+
+  @override
+  String toString() {
+    return '{${this.name}, ${this.value}, ${this.recurrenceDate}}';
   }
 }

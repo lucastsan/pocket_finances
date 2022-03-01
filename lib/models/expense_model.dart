@@ -40,7 +40,6 @@ class Expense {
     List<Expense> expensesList = expensesListJson
         .map((expenseJson) => Expense.fromJson(expenseJson))
         .toList();
-    print(expensesList);
     return expensesList;
   }
 }
