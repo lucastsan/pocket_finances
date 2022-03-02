@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                     incomesValue: incomes,
                   );
                 }));
-                if (result != null) {
+                if (result != null && result == true) {
                   setState(() {
                     initValues();
                   });

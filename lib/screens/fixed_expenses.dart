@@ -99,13 +99,54 @@ class _FixedExpensesPageState extends State<FixedExpensesPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          _selectedItems.length <= 1
-                              ? _selectedItems.length.toString() +
-                                  ' Item selecionado'
-                              : _selectedItems.length.toString() +
-                                  ' Items selecionados',
-                          style: kActivatedText,
+                        Row(
+                          children: [
+                            Container(
+                              width: 60,
+                              child: Center(
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                      Color(0xFF2F3552),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    if (_selectedItems.length ==
+                                        fixedExpensesList.length) {
+                                      setState(() {
+                                        _selectedItems.clear();
+                                        boxHeight = 0;
+                                      });
+                                    } else {
+                                      for (var i = 0;
+                                          i < fixedExpensesList.length;
+                                          i++) {
+                                        if (!_selectedItems.contains(i)) {
+                                          setState(() {
+                                            _selectedItems.insert(i, i);
+                                          });
+                                          print(_selectedItems);
+                                        }
+                                      }
+                                    }
+                                  },
+                                  child: Icon(Icons.select_all),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                _selectedItems.length <= 1
+                                    ? _selectedItems.length.toString() +
+                                        ' Item selecionado'
+                                    : _selectedItems.length.toString() +
+                                        ' Items selecionados',
+                                style: kActivatedText,
+                              ),
+                            ),
+                          ],
                         ),
                         ElevatedButton(
                           style: ButtonStyle(
@@ -113,11 +154,16 @@ class _FixedExpensesPageState extends State<FixedExpensesPage> {
                                 kSelectionColor),
                           ),
                           onPressed: () {
-                            for (var item in _selectedItems) {
-                              if (fixedExpensesList.length - 1 < item) {
-                                item--;
+                            if (fixedExpensesList.length ==
+                                _selectedItems.length) {
+                              fixedExpensesList.clear();
+                            } else {
+                              for (var item in _selectedItems) {
+                                if (fixedExpensesList.length - 1 < item) {
+                                  item--;
+                                }
+                                fixedExpensesList.removeAt(item);
                               }
-                              fixedExpensesList.removeAt(item);
                             }
                             setState(() {
                               _selectedItems.clear();
@@ -166,7 +212,7 @@ class _FixedExpensesPageState extends State<FixedExpensesPage> {
 
   Widget emptyList() => Center(
         child: Text(
-          'Sem Despesas',
+          'Sem Despesas Fixas',
           style: kBalanceTitleStyle,
         ),
       );

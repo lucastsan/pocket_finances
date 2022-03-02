@@ -33,11 +33,18 @@ class MyApp extends StatelessWidget {
           accentColor: Color(0x70475BBF),
         ),
         inputDecorationTheme: InputDecorationTheme(
+          errorStyle: TextStyle(color: Colors.red, fontSize: 12),
           labelStyle: TextStyle(color: kSelectionColor),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
               style: BorderStyle.solid,
               color: kSelectionColor,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              style: BorderStyle.solid,
+              color: Colors.red,
             ),
           ),
         ),

@@ -95,15 +95,58 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                     height: boxHeight,
                     color: kMainCard,
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      textBaseline: TextBaseline.alphabetic,
                       children: [
-                        Text(
-                          _selectedItems.length <= 1
-                              ? _selectedItems.length.toString() +
-                                  ' Item selecionado'
-                              : _selectedItems.length.toString() +
-                                  ' Items selecionados',
-                          style: kActivatedText,
+                        Row(
+                          children: [
+                            Container(
+                              width: 60,
+                              child: Center(
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                      Color(0xFF2F3552),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    if (_selectedItems.length ==
+                                        expensesList.length) {
+                                      setState(() {
+                                        _selectedItems.clear();
+                                        boxHeight = 0;
+                                      });
+                                    } else {
+                                      for (var i = 0;
+                                          i < expensesList.length;
+                                          i++) {
+                                        if (!_selectedItems.contains(i)) {
+                                          setState(() {
+                                            _selectedItems.insert(i, i);
+                                          });
+                                          print(_selectedItems);
+                                        }
+                                      }
+                                    }
+                                  },
+                                  child: Icon(Icons.select_all),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                _selectedItems.length <= 1
+                                    ? _selectedItems.length.toString() +
+                                        ' Item selecionado'
+                                    : _selectedItems.length.toString() +
+                                        ' Items selecionados',
+                                style: kActivatedText,
+                              ),
+                            ),
+                          ],
                         ),
                         ElevatedButton(
                           style: ButtonStyle(
@@ -111,12 +154,17 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                                 kSelectionColor),
                           ),
                           onPressed: () {
-                            for (var item in _selectedItems) {
-                              if (expensesList.length - 1 < item) {
-                                item--;
+                            if (expensesList.length == _selectedItems.length) {
+                              expensesList.clear();
+                            } else {
+                              for (var item in _selectedItems) {
+                                if (expensesList.length - 1 < item) {
+                                  item--;
+                                }
+                                expensesList.removeAt(item);
                               }
-                              expensesList.removeAt(item);
                             }
+
                             setState(() {
                               _selectedItems.clear();
                               saveExpensesList(expensesList);
