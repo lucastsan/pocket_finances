@@ -6,6 +6,8 @@ import 'package:pocket_finances/constants.dart';
 import 'package:pocket_finances/models/expense_model.dart';
 import 'package:pocket_finances/screens/add_current_expenses.dart';
 
+import 'edit_current_expenses.dart';
+
 class CurrentExpensesPage extends StatefulWidget {
   const CurrentExpensesPage({Key? key}) : super(key: key);
 
@@ -14,7 +16,8 @@ class CurrentExpensesPage extends StatefulWidget {
 }
 
 class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
-  final String heroTag = 'add-current-expense';
+  final String heroTagAddExpense = 'add-current-expense';
+  final String heroTagEditExpense = 'edit-current-expense-';
   late List<Expense> expensesList;
   double boxHeight = 0;
   List<int> _selectedItems = [];
@@ -38,50 +41,81 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                     child: ListView.builder(
                         itemCount: snapshot.data?.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            color: (_selectedItems.contains(index))
-                                ? kHighlightColor
-                                : Colors.transparent,
-                            child: ListTile(
-                              onLongPress: () {
-                                if (!_selectedItems.contains(index)) {
-                                  setState(() {
-                                    boxHeight = 80;
-                                    _selectedItems.add(index);
-                                    print(_selectedItems);
-                                  });
-                                }
-                              },
-                              onTap: () {
-                                if (_selectedItems.isNotEmpty) {
-                                  if (_selectedItems.contains(index)) {
-                                    if (_selectedItems.length <= 1) {
-                                      boxHeight = 0;
+                          return Theme(
+                            data: ThemeData(
+                              splashColor: ThemeData.dark().splashColor,
+                              highlightColor: kSelectionColor,
+                            ),
+                            child: Container(
+                              color: (_selectedItems.contains(index))
+                                  ? kHighlightColor
+                                  : Colors.transparent,
+                              child: Hero(
+                                tag: heroTagEditExpense + index.toString(),
+                                child: ListTile(
+                                  onLongPress: () {
+                                    if (!_selectedItems.contains(index)) {
+                                      setState(() {
+                                        boxHeight = 80;
+                                        _selectedItems.add(index);
+                                        print(_selectedItems);
+                                      });
                                     }
-                                    setState(() {
-                                      _selectedItems.removeWhere(
-                                          (element) => element == index);
-                                      print(_selectedItems);
-                                    });
-                                  } else {
-                                    setState(() {
-                                      _selectedItems.add(index);
-                                      print(_selectedItems);
-                                    });
-                                  }
-                                }
-                              },
-                              title: Text(
-                                snapshot.data![index].name,
-                                style: kBalanceTitleStyle,
-                              ),
-                              subtitle: Text(
-                                snapshot.data![index].date,
-                                style: kInfoValueStyle,
-                              ),
-                              trailing: Text(
-                                snapshot.data![index].value.toString(),
-                                style: kBalanceTitleStyle,
+                                  },
+                                  onTap: () async {
+                                    if (_selectedItems.isNotEmpty) {
+                                      if (_selectedItems.contains(index)) {
+                                        if (_selectedItems.length <= 1) {
+                                          boxHeight = 0;
+                                        }
+                                        setState(() {
+                                          _selectedItems.removeWhere(
+                                              (element) => element == index);
+                                          print(_selectedItems);
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _selectedItems.add(index);
+                                          print(_selectedItems);
+                                        });
+                                      }
+                                    } else {
+                                      final result = await Navigator.of(context)
+                                          .push(HeroDialogRoute(
+                                              builder: (context) {
+                                        return EditCurrentExpenses(
+                                          heroTag: heroTagEditExpense +
+                                              index.toString(),
+                                          expenseName:
+                                              snapshot.data![index].name,
+                                          expenseValue:
+                                              snapshot.data![index].value,
+                                          expenseDate:
+                                              snapshot.data![index].date,
+                                        );
+                                      }));
+                                      if (result != false && result != null) {
+                                        setState(() {
+                                          editExpense(
+                                              result, expensesList, index);
+                                          expController.add(1);
+                                        });
+                                      }
+                                    }
+                                  },
+                                  title: Text(
+                                    snapshot.data![index].name,
+                                    style: kBalanceTitleStyle,
+                                  ),
+                                  subtitle: Text(
+                                    snapshot.data![index].date,
+                                    style: kInfoValueStyle,
+                                  ),
+                                  trailing: Text(
+                                    snapshot.data![index].value.toString(),
+                                    style: kBalanceTitleStyle,
+                                  ),
+                                ),
                               ),
                             ),
                           );
@@ -150,8 +184,8 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                         ),
                         ElevatedButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                kSelectionColor),
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.red),
                           ),
                           onPressed: () {
                             if (expensesList.length == _selectedItems.length) {
@@ -185,11 +219,11 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
       ),
       floatingActionButton: _selectedItems.length == 0
           ? FloatingActionButton(
-              heroTag: heroTag,
+              heroTag: heroTagAddExpense,
               onPressed: () async {
                 final result = await Navigator.of(context)
                     .push(HeroDialogRoute(builder: (context) {
-                  return AddCurrentExpenses(heroTag: heroTag);
+                  return AddCurrentExpenses(heroTag: heroTagAddExpense);
                 }));
                 if (result != false && result != null) {
                   setState(() {
@@ -219,6 +253,11 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
 
   void addExpense(Expense expense, List<Expense> expensesList) {
     expensesList.add(expense);
+    saveExpensesList(expensesList).whenComplete(() => print(expensesList));
+  }
+
+  void editExpense(Expense expense, List<Expense> expensesList, int index) {
+    expensesList[index] = expense;
     saveExpensesList(expensesList).whenComplete(() => print(expensesList));
   }
 }

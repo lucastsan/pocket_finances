@@ -52,6 +52,10 @@ class IncomesChangePopup extends StatelessWidget {
                               hintText: 'Insira sua renda',
                               hintStyle: kDeactivateText,
                             ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r"[0-9.]")),
+                            ],
                           ),
                         ),
                       ),
