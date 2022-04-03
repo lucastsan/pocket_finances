@@ -113,7 +113,9 @@ class _HomePageState extends State<HomePage> {
                           return LinearPercentIndicator(
                             lineHeight: 10.0,
                             percent: percentage,
-                            progressColor: kSelectionColor,
+                            progressColor: percentage >= 0.8
+                                ? Colors.red
+                                : kSelectionColor,
                           );
                         } else {
                           return SizedBox(
