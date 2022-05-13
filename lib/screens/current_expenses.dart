@@ -39,6 +39,7 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                 children: [
                   Expanded(
                     child: ListView.builder(
+                        padding: EdgeInsets.only(bottom: 60),
                         itemCount: snapshot.data?.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Theme(
@@ -217,8 +218,9 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
           },
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _selectedItems.length == 0
-          ? FloatingActionButton(
+          ? FloatingActionButton.extended(
               heroTag: heroTagAddExpense,
               onPressed: () async {
                 final result = await Navigator.of(context)
@@ -232,7 +234,8 @@ class _CurrentExpensesPageState extends State<CurrentExpensesPage> {
                   });
                 }
               },
-              child: Material(
+              label: Text('Nova Despesa'),
+              icon: Material(
                 type: MaterialType.transparency,
                 child: Icon(
                   Icons.add,

@@ -6,11 +6,30 @@ import 'package:pocket_finances/constants.dart';
 import 'package:pocket_finances/screens/current_expenses.dart';
 import 'package:pocket_finances/screens/fixed_expenses.dart';
 import 'package:pocket_finances/screens/home_page.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 StreamController<int> expController = StreamController<int>();
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
   final numState = new ValueNotifier(0);
+
+  void initState() {
+    super.initState();
+    initialization();
+  }
+
+  void initialization() async {
+    await Future.delayed(const Duration(seconds: 1));
+    FlutterNativeSplash.remove();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
